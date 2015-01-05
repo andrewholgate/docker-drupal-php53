@@ -1,5 +1,5 @@
 <VirtualHost *:80>
-    DocumentRoot /var/www
+    DocumentRoot /var/www/htdocs
     RewriteEngine On
     RewriteOptions inherit
 
