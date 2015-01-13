@@ -9,7 +9,9 @@ RUN apt-get -y upgrade
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install curl apache2 mysql-client supervisor php5 php5-cli libapache2-mod-php5 php5-gd php5-json php5-mysql openssh-client rsyslog git-core make libpcre3-dev php-pear
 
 ADD default /etc/apache2/sites-available/default
-RUN a2enmod rewrite
+ADD default-ssl /etc/apache2/sites-available/default-ssl
+RUN a2enmod rewrite ssl
+RUN a2ensite default default-ssl
 
 # Add ubuntu user.
 RUN useradd ubuntu -d /home/ubuntu
@@ -38,7 +40,11 @@ RUN sed -ri 's/^expose_php\s*=\s*On/expose_php = Off/g' /etc/php5/apache2/php.in
 
 # Install APC
 RUN printf "\n" | pecl install apc
-RUN echo "extension = apc.so" >> /etc/php5/apache2/php.ini
+RUN echo "extension=apc.so" >> /etc/php5/apache2/conf.d/apc.ini
+
+# Install Uploadprogress
+RUN pecl install uploadprogress
+RUN echo "extension=uploadprogress.so" >> /etc/php5/apache2/conf.d/uploadprogress.ini
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php \
@@ -47,7 +53,7 @@ RUN curl -sS https://getcomposer.org/installer | php \
 # Install drush
 RUN composer global require drush/drush:6.* \
   && ln -s $HOME/.composer/vendor/drush/drush/drush /usr/bin/drush
-ADD drushrc_config ~/.drush/drushrc.php
+ADD drushrc.php ~/.drush/drushrc.php
 RUN pear install Console_Table
 
 # Clean-up installation.
