@@ -1,12 +1,18 @@
 FROM ubuntu:12.04
 MAINTAINER Andrew Holgate <andrewholgate@yahoo.com>
 
-VOLUME ["/var/www"]
-
 RUN apt-get update
 RUN apt-get -y upgrade
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install curl apache2 mysql-client supervisor php5 php5-cli libapache2-mod-php5 php5-gd php5-json php5-mysql openssh-client rsyslog git-core make libpcre3-dev php-pear
+
+# Troubleshooting tools, see: http://www.linuxjournal.com/magazine/hack-and-linux-troubleshooting-part-i-high-load
+# I/O troubleshooting tools
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install sysstat iotop htop
+# Network troubleshooting tools
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install ethtool net-tools iputils-ping nmap dnsutils traceroute
+# Other useful tools
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y install wget nano
 
 ADD default /etc/apache2/sites-available/default
 ADD default-ssl /etc/apache2/sites-available/default-ssl
