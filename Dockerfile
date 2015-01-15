@@ -48,11 +48,10 @@ RUN sed -ri 's/^memory_limit\s*=\s*128M/memory_limit = 256M/g' /etc/php5/apache2
 RUN sed -ri 's/^expose_php\s*=\s*On/expose_php = Off/g' /etc/php5/apache2/php.ini
 
 # Add ubuntu user.
-RUN useradd ubuntu -d /home/ubuntu
-RUN mkdir -p /home/ubuntu/.ssh
-RUN chmod 700 /home/ubuntu/.ssh
-RUN chown ubuntu:ubuntu /home/ubuntu/.ssh
-RUN export HOME=/home/ubuntu/
+RUN useradd -ms /bin/bash ubuntu
+RUN ln -s /var/www /home/ubuntu/www
+RUN echo "export TERM=xterm" >> /home/ubuntu/.profile
+RUN chown -R ubuntu:ubuntu /home/ubuntu
 
 # Setup docker group
 RUN groupadd docker
