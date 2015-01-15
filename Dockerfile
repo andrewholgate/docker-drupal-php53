@@ -14,10 +14,38 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install ethtool net-tools iputils-
 # Other useful tools
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install wget nano
 
-ADD default /etc/apache2/sites-available/default
-ADD default-ssl /etc/apache2/sites-available/default-ssl
+# Install Uploadprogress
+RUN pecl install uploadprogress
+RUN echo "extension=uploadprogress.so" >> /etc/php5/apache2/conf.d/uploadprogress.ini
+
+# Install APC
+RUN printf "\n" | pecl install apc
+RUN echo "extension=apc.so" >> /etc/php5/apache2/conf.d/apc.ini
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php \
+  && mv composer.phar /usr/local/bin/composer
+
+# Install drush
+RUN composer global require drush/drush:6.* \
+  && ln -s $HOME/.composer/vendor/drush/drush/drush /usr/bin/drush
+COPY drushrc.php ~/.drush/drushrc.php
+RUN pear install Console_Table
+
+# Confiure Apache
+COPY default /etc/apache2/sites-available/default
+COPY default-ssl /etc/apache2/sites-available/default-ssl
 RUN a2enmod rewrite ssl
 RUN a2ensite default default-ssl
+
+# Add Drupal logs to syslog
+RUN echo "local0.* /var/log/drupal.log" >> /etc/rsyslog.conf
+
+# Production PHP settings.
+RUN sed -ri 's/^;error_log\s*=\s*syslog/error_log = syslog/g' /etc/php5/apache2/php.ini
+RUN sed -ri 's/^short_open_tag\s*=\s*On/short_open_tag = Off/g' /etc/php5/apache2/php.ini
+RUN sed -ri 's/^memory_limit\s*=\s*128M/memory_limit = 256M/g' /etc/php5/apache2/php.ini
+RUN sed -ri 's/^expose_php\s*=\s*On/expose_php = Off/g' /etc/php5/apache2/php.ini
 
 # Add ubuntu user.
 RUN useradd ubuntu -d /home/ubuntu
@@ -30,37 +58,12 @@ RUN export HOME=/home/ubuntu/
 RUN groupadd docker
 RUN gpasswd -a ubuntu docker
 
+# Supervisor
 RUN mkdir -p /var/log/supervisor
-ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-ADD run.sh /usr/local/bin/run
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+COPY run.sh /usr/local/bin/run
 RUN chmod +x /usr/local/bin/run
-
-# Add Drupal logs to syslog
-RUN echo "local0.* /var/log/drupal.log" >> /etc/rsyslog.conf
-
-# Production PHP settings.
-RUN sed -ri 's/^;error_log\s*=\s*syslog/error_log = syslog/g' /etc/php5/apache2/php.ini
-RUN sed -ri 's/^short_open_tag\s*=\s*On/short_open_tag = Off/g' /etc/php5/apache2/php.ini
-RUN sed -ri 's/^memory_limit\s*=\s*128M/memory_limit = 256M/g' /etc/php5/apache2/php.ini
-RUN sed -ri 's/^expose_php\s*=\s*On/expose_php = Off/g' /etc/php5/apache2/php.ini
-
-# Install APC
-RUN printf "\n" | pecl install apc
-RUN echo "extension=apc.so" >> /etc/php5/apache2/conf.d/apc.ini
-
-# Install Uploadprogress
-RUN pecl install uploadprogress
-RUN echo "extension=uploadprogress.so" >> /etc/php5/apache2/conf.d/uploadprogress.ini
-
-# Install Composer
-RUN curl -sS https://getcomposer.org/installer | php \
-  && mv composer.phar /usr/local/bin/composer
-
-# Install drush
-RUN composer global require drush/drush:6.* \
-  && ln -s $HOME/.composer/vendor/drush/drush/drush /usr/bin/drush
-ADD drushrc.php ~/.drush/drushrc.php
-RUN pear install Console_Table
 
 # Clean-up installation.
 RUN DEBIAN_FRONTEND=noninteractive apt-get autoclean
@@ -69,4 +72,4 @@ RUN /etc/init.d/apache2 restart
 
 EXPOSE 80 443 22
 
-CMD ["/usr/local/bin/run"]
+ENTRYPOINT ["/usr/local/bin/run"]
