@@ -1,4 +1,4 @@
-<php
+<?php
 
 exec('git rev-parse --git-dir 2> /dev/null', $output);
 if (!empty($output)) {
