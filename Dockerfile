@@ -33,6 +33,8 @@ RUN printf "\n" | pecl install apc
 RUN echo "extension=apc.so" >> /etc/php5/apache2/conf.d/apc.ini
 
 # Install Composer
+ENV COMPOSER_HOME /home/ubuntu/.composer
+RUN echo "export COMPOSER_HOME=/home/ubuntu/.composer" >> /etc/bash.bashrc
 RUN curl -sS https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/local/bin/composer
 
