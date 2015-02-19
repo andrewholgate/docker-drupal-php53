@@ -30,10 +30,10 @@ sudo docker run -d --name mysql-drupal mysql:5.5 --entrypoint /bin/echo MySQL da
 
 ```bash
 # Clone Drupal docker repository
-git clone https://github.com/andrewholgate/docker-drupal-ubuntu.git
+git clone https://github.com/andrewholgate/docker-drupal-ubuntu12.04.git
 # Build docker image
-cd docker-drupal-ubuntu
-sudo docker build --rm=true --tag="drupal-ubuntu" .
+cd docker-drupal-ubuntu12.04
+sudo docker build --rm=true --tag="drupal-ubuntu12.04" .
 ```
 
 ## Build Project using fig
@@ -51,7 +51,7 @@ From the host server, add the web container IP address to the hosts file.
 ```bash
 # Add IP address to hosts file.
 sudo bash -c "echo $(sudo docker inspect -f '{{ .NetworkSettings.IPAddress }}' \
-dockerdrupalubuntu_drupalweb_1) \
+dockerdrupalubuntu1204_drupalubuntu12web_1) \
 drupal.example.com \
 >> /etc/hosts"
 ```
@@ -60,5 +60,5 @@ drupal.example.com \
 
 ```bash
 # Using the container name of the web frontend.
-sudo docker exec -it dockerdrupalubuntu_drupalweb_1 su - ubuntu
+sudo docker exec -it dockerdrupalubuntu1204_drupalubuntu12web_1 su - ubuntu
 ```

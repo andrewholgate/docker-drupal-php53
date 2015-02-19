@@ -1,7 +1,7 @@
-drupalweb:
+drupalubuntu12web:
   build: .
   ports:
-    - "87:80"
+    - "81:80"
   links:
    - drupaldb:database
 drupaldb:
