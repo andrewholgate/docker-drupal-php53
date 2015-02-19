@@ -1,8 +1,8 @@
 # About
 
-This base Ubuntu docker container comes configured with most tools that you'll need for Drupal 7 projects.
+This base Ubuntu 12.04 docker container comes configured with tools for Drupal 7 projects.
 
-When developing, this project should be used in conjunction with [docker-drupal-ubuntu-dev](https://github.com/andrewholgate/docker-drupal-ubuntu-dev)
+When developing, this project should be used in conjunction with [docker-drupal-ubuntu12.04-dev](https://github.com/andrewholgate/docker-drupal-ubuntu12.04-dev)
 
 # Included Tools
 
