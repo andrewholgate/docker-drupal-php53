@@ -47,7 +47,7 @@ USER root
 RUN pear install Console_Table
 RUN  ln -s /home/ubuntu/.composer/vendor/drush/drush/drush /usr/local/bin/drush
 
-# Confiure Apache
+# Configure Apache
 RUN rm -rf /var/www/*
 COPY default /etc/apache2/sites-available/default
 COPY default-ssl /etc/apache2/sites-available/default-ssl

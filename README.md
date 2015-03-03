@@ -36,12 +36,12 @@ cd docker-drupal-ubuntu12.04
 sudo docker build --rm=true --tag="drupal-ubuntu12.04" .
 ```
 
-## Build Project using fig
+## Build Project using Docker Compose
 
 ```bash
-# Build docker containers using fig.
-sudo fig build
-sudo fig up -d
+# Build docker containers using Docker Compose.
+sudo docker-compose build
+sudo docker-compose up -d
 ```
 
 ## Host Access
