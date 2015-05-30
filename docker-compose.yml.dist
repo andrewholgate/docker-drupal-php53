@@ -1,16 +1,16 @@
-drupalubuntu12web:
+drupalphp53web:
   build: .
   ports:
     - "81:80"
   links:
-   - drupaldb:database
-drupaldb:
+   - drupalphp53db:database
+drupalphp53db:
   image: mysql:5.5
   volumes_from:
-    - mysql-drupal
+    - mysql-drupal-php53
   environment:
     TERM: xterm
     MYSQL_ROOT_PASSWORD: password
     MYSQL_USER: user
     MYSQL_PASSWORD: password
-    MYSQL_DATABASE: drupal
+    MYSQL_DATABASE: drupalphp53
